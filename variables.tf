@@ -15,14 +15,6 @@ EOT
     scope      = string
     notes      = optional(string)
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.management_locks : (
-        v.notes == null || (length(v.notes) >= 0 && length(v.notes) <= 512)
-      )
-    ])
-    error_message = "must be between 0 and 512 characters"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_management_lock's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -35,5 +27,8 @@ EOT
   #   source:    [from validate.ManagementLockName: invalid when len(value) >= 260]
   # path: lock_level
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: notes
+  #   condition: length(value) >= 0 && length(value) <= 512
+  #   message:   must be between 0 and 512 characters
 }
 
